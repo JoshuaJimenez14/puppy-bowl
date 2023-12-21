@@ -31,7 +31,7 @@ const renderPuppies = async () => {
     li.addEventListener("click", () => {
       state.selectedPuppy = puppy;
       render();
-      console.log(state);
+      window.location.hash = puppy.id;
     });
    
 
@@ -51,21 +51,37 @@ const renderPuppy = () => {
   </li>
   `;
   $puppies.querySelector("button").addEventListener ("click", () => {
-
-state.selectedPuppy = null;
+  state.selectedPuppy = null;
 render();
+window.location.hash = " ";
   });
 };
 const render = () => {
-  if (state.selectedPuppy === null){
+  if (!state.selectedPuppy){
   renderPuppies();
   } else {
     renderPuppy();
   }
 };
+const loadPuppyFromHash = async () => {
+    if (state.puppies.length === 0){
+      await getPuppies ();
+    }
+    const idFromHash = +window.location.hash.slice(1);
+    state.selectedPuppy = state.puppies.find(
+      (puppy) => puppy.id === idFromHash
+      );
+
+      render();
+
+    };
+  
+  window.addEventListener("hashchange", loadPuppyFromHash) ;
+  
+
 
 const init = async () => {
-renderPuppies();
+  loadPuppyFromHash();
 };
 
 init();
